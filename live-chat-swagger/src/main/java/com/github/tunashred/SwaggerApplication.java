@@ -1,4 +1,4 @@
-package com.github.tunashred.app;
+package com.github.tunashred;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
