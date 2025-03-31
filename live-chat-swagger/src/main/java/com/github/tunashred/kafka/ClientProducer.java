@@ -37,6 +37,9 @@ public class ClientProducer implements Runnable {
         while (keepRunnning.get()) {
             try (KafkaProducer<String, String> producer = new KafkaProducer<>(producerProps)) {
                 while (keepRunnning.get()) {
+                    // what if what I am doing here is just the kafka streams boilerplate?
+                    // if so, it would be worth to talk about this in my thesis to show the difference between KafkaProducer
+                    // and KStream implementations
                     synchronized (lock) {
                         while (!hasMessage.get()) {
                             try {
