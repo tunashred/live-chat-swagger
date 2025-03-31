@@ -8,6 +8,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
+// currently, not using this
+// just keeping it a bit, maybe will come in handy later
 @RestController
 public class ConsumerWebSocketController {
     private final ClientConsumer kafkaConsumer;

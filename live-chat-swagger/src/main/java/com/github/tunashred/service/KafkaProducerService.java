@@ -20,7 +20,6 @@ public class KafkaProducerService {
 
     public void sendMessage(String group, String user, String message) {
         MessageInfo messageInfo = new MessageInfo(new GroupChat(group), new User(user), message);
-
         kafkaProducer.sendMessage(messageInfo);
     }
 }

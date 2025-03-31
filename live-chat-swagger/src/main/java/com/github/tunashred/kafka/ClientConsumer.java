@@ -33,6 +33,7 @@ public class ClientConsumer implements Runnable {
     private List<MessageInfo> fetchedMessages;
 
     @Setter
+    // this does not work for some reason, just for debugging purposes I believe
     private Consumer<ConsumerRecord<String, String>> messageHandler = message -> System.out.println(message.value());
     private AtomicBoolean keepRunnning = new AtomicBoolean(true);
     private AtomicBoolean consumeMessages = new AtomicBoolean(false);
@@ -49,7 +50,6 @@ public class ClientConsumer implements Runnable {
 
     @Override
     public void run() throws RuntimeException {
-        System.out.println(this.user + " " + this.groupTopic);
         Properties consumerProps = new Properties();
         try (InputStream propsFile = new FileInputStream("src/main/resources/consumer.properties")) {
             consumerProps.load(propsFile);
@@ -114,7 +114,6 @@ public class ClientConsumer implements Runnable {
             lock.notify();
         }
 
-        // actually this wont work since its running on the same thread lol
         synchronized (doneLock) {
             while (consumeMessages.get()) {
                 try {
@@ -141,9 +140,9 @@ public class ClientConsumer implements Runnable {
             this.kafkaConsumer.assign(partitions);
             this.kafkaConsumer.seekToBeginning(partitions);
         } else {
+            // this part is not complete yet
+            // I just stopped here since I don't know if I am on the right path
             this.kafkaConsumer.subscribe(Collections.singletonList(groupTopic));
         }
     }
-
-
 }
