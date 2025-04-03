@@ -12,6 +12,7 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    // properties with the same name as fields
     @Value("${client.username}")
     private String username;
 
@@ -20,12 +21,6 @@ public class KafkaProducerConfig {
 
     @Bean
     public ClientProducer producer() {
-        ClientProducer producer = new ClientProducer(new User(username), new GroupChat(groupname));
-
-        Thread producerThread = new Thread(producer);
-        producerThread.setDaemon(true);
-        producerThread.start();
-
-        return producer;
+        return new ClientProducer(new User(username), new GroupChat(groupname));
     }
 }

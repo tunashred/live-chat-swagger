@@ -18,12 +18,6 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ClientConsumer consumer() {
-        ClientConsumer consumer = new ClientConsumer(username, groupname);
-
-        Thread consumerThread = new Thread(consumer);
-        consumerThread.setDaemon(true);
-        consumerThread.start();
-
-        return consumer;
+        return new ClientConsumer(username, groupname);
     }
 }

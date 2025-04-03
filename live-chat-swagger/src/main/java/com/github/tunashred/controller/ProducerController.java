@@ -24,7 +24,7 @@ public class ProducerController {
     @PostMapping("/send")
     @Operation(summary = "Send message to a group")
     public ResponseEntity<String> sendMessage(
-            @RequestBody MessageRequest messageContent) {
+            @RequestBody MessageRequest messageContent) { // TODO: revert to Requestparam
 
         MessageInfo messageInfo = new MessageInfo(new GroupChat(messageContent.getGroupName()), new User(messageContent.getUserName()), messageContent.getMessageContent());
 
