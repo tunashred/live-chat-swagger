@@ -1,0 +1,48 @@
+package com.github.tunashred.controller;
+
+import com.github.tunashred.dto.MessageRequest;
+import com.github.tunashred.dtos.MessageInfo;
+
+import com.github.tunashred.kafka.ClientConsumer;
+import com.github.tunashred.kafka.ClientProducer;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+
+import javax.xml.bind.ValidationException;
+
+public class MessageController {
+    public static void registerRoutes(Javalin app, ClientProducer producerService, ClientConsumer consumerService) {
+        app.post("/client-produce-message", ctx -> {
+            MessageRequest messageRequest = getProduceParams(ctx);
+            producerService.sendMessage(messageRequest.getMessage());
+            ctx.result("Produced: " + messageRequest.getMessage());
+        });
+
+        app.get("/client-consume-message", ctx -> {
+            MessageInfo message = consumerService.consumeMessage();
+            if (message == null) {
+                ctx.result("[WARNING] No records to fetch");
+            } else {
+                ctx.result(message.getUser().getName() + ": " + message.getMessage());
+            }
+        });
+
+        app.get("/", ctx -> ctx.redirect("swagger-ui.html"));
+    }
+
+    private static MessageRequest getProduceParams(Context ctx) throws ValidationException {
+        String message = ctx.queryParam("message");
+        String dummyParam = ctx.queryParam("dummy param");
+
+        // validate the params
+        if (message == null || message.trim().isEmpty()) {
+            throw new ValidationException("Parameter 'message' is required");
+        }
+
+        if (dummyParam == null || dummyParam.trim().isEmpty()) {
+            throw new ValidationException("Parameter 'dummy param' is required");
+        }
+
+        return new MessageRequest(message, Integer.parseInt(dummyParam));
+    }
+}
