@@ -1,7 +1,6 @@
 package com.github.tunashred.controller;
 
 import com.github.tunashred.dto.BannedWordRequest;
-import com.github.tunashred.dto.MessageRequest;
 import com.github.tunashred.dtos.MessageInfo;
 
 import com.github.tunashred.kafka.ClientConsumer;
@@ -18,9 +17,9 @@ public class MessageController {
 
     public static void registerRoutes(Javalin app, ClientProducer producerService, ClientConsumer consumerService) {
         app.post("/client-produce-message", ctx -> {
-            MessageRequest messageRequest = getProduceParams(ctx);
-            producerService.sendMessage(messageRequest.getMessage());
-            ctx.result("Produced: " + messageRequest.getMessage());
+            String message = getMessage(ctx);
+            producerService.sendMessage(message);
+            ctx.result("Produced: " + message);
         });
 
         app.get("/client-consume-message", ctx -> {
@@ -47,20 +46,15 @@ public class MessageController {
         app.get("/", ctx -> ctx.redirect("swagger-ui.html"));
     }
 
-    private static MessageRequest getProduceParams(Context ctx) throws ValidationException {
+    // TODO: maybe make this method somehow universal for adding and validating params
+    private static String getMessage(Context ctx) throws ValidationException {
         String message = ctx.queryParam("message");
-        String dummyParam = ctx.queryParam("dummy param");
-
-        // validate the params
+        
         if (message == null || message.trim().isEmpty()) {
             throw new ValidationException("Parameter 'message' is required");
         }
 
-        if (dummyParam == null || dummyParam.trim().isEmpty()) {
-            throw new ValidationException("Parameter 'dummy param' is required");
-        }
-
-        return new MessageRequest(message, Integer.parseInt(dummyParam));
+        return message;
     }
 
     private static BannedWordRequest getBannedWord(Context ctx) throws ValidationException {

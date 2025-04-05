@@ -24,12 +24,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: dummy param
-          in: query
-          description: Some dummy param
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: Message sent successfully
