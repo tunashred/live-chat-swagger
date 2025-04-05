@@ -18,6 +18,11 @@ public class ClientProducer {
         this.producer = new KafkaProducer<>(KafkaConfig.getProducerProps());
     }
 
+    // TODO: reminder to call this somewhere
+    public void close() {
+        producer.close();
+    }
+
     //
     // Client API
     //
@@ -50,9 +55,5 @@ public class ClientProducer {
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, word, null);
         producer.send(record);
         producer.flush();
-    }
-
-    public void close() {
-        producer.close();
     }
 }

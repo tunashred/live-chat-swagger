@@ -27,11 +27,15 @@ public class ClientConsumer {
     }
 
     private MessageInfo consumeStoredMessage() throws JsonProcessingException {
+        if (records.isEmpty()) {
+            return null;
+        }
         MessageInfo message = MessageInfo.deserialize(records.get(0).value());
         records.remove(0);
         return message;
     }
 
+    // TODO: reminder to call this somewhere
     public void close() {
         consumer.close();
     }
@@ -55,13 +59,13 @@ public class ClientConsumer {
                 return consumeStoredMessage();
             }
 
-            ConsumerRecords<String, String> consumerRecords = null;
+            ConsumerRecords<String, String> consumerRecords;
             int tries = 0;
             do {
                 consumerRecords = consumer.poll(Duration.ofMillis(1000));
                 tries++;
                 if (tries >= maxTries) {
-                    return null;
+                    break;
                 }
                 System.out.println("da loop");
             } while (consumerRecords.isEmpty());
