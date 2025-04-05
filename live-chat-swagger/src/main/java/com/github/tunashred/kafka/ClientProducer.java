@@ -5,10 +5,13 @@ import com.github.tunashred.dtos.MessageInfo;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
 public class ClientProducer {
+    private static final Logger logger = LogManager.getLogger(ClientProducer.class);
     private final Producer<String, String> producer;
 
     public ClientProducer() {

@@ -7,10 +7,14 @@ import com.github.tunashred.kafka.ClientConsumer;
 import com.github.tunashred.kafka.ClientProducer;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.bind.ValidationException;
 
 public class MessageController {
+    private static final Logger logger = LogManager.getLogger(MessageController.class);
+
     public static void registerRoutes(Javalin app, ClientProducer producerService, ClientConsumer consumerService) {
         app.post("/client-produce-message", ctx -> {
             MessageRequest messageRequest = getProduceParams(ctx);

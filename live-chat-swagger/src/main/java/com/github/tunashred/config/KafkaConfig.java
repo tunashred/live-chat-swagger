@@ -2,6 +2,8 @@ package com.github.tunashred.config;
 
 import com.github.tunashred.dtos.GroupChat;
 import com.github.tunashred.dtos.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +13,8 @@ import java.util.Properties;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 
 public class KafkaConfig {
+    private static final Logger logger = LogManager.getLogger(KafkaConfig.class);
+
     public static final String unsafe_topic = "unsafe_chat";
     public static final String group_topic = "baia-mare";
     public static final String username = "gulios";

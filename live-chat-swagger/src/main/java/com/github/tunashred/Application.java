@@ -6,8 +6,12 @@ import com.github.tunashred.kafka.ClientConsumer;
 import com.github.tunashred.kafka.ClientProducer;
 
 import io.javalin.Javalin;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Application {
+    private static final Logger logger = LogManager.getLogger(Application.class);
+
     public static void main(String[] args) {
         ClientProducer producerService = new ClientProducer();
         ClientConsumer consumerService = new ClientConsumer();

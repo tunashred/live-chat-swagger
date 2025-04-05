@@ -7,6 +7,8 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ClientConsumer {
+    private static final Logger logger = LogManager.getLogger(ClientConsumer.class);
+
     private final Consumer<String, String> consumer;
     private List<ConsumerRecord<String, String>> records = new ArrayList<>();
 
