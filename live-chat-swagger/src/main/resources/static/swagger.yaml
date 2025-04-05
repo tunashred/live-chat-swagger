@@ -5,10 +5,18 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:7000
+
+tags:
+  - name: Client API
+    description: Operations related to clients
+  - name: Admin API
+    description: Operations related to staff/devs
 paths:
   /client-produce-message:
     post:
       summary: Produce a client message
+      tags:
+        - Client API
       parameters:
         - name: message
           in: query
@@ -28,6 +36,8 @@ paths:
   /client-consume-message:
     get:
       summary: Consume client message
+      tags:
+        - Client API
       responses:
         "200":
           description: Message consumed
@@ -41,6 +51,8 @@ paths:
   /admin-add-banned-word:
     post:
       summary: Add a new banned word to a dedicated topic
+      tags:
+        - Admin API
       parameters:
         - name: topic
           in: query
@@ -61,6 +73,8 @@ paths:
   /admin-remove-banned-word:
     post:
       summary: Remove a new banned word from a dedicated topic
+      tags:
+        - Admin API
       parameters:
         - name: topic
           in: query
