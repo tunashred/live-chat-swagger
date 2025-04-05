@@ -1,5 +1,6 @@
 package com.github.tunashred.controller;
 
+import com.github.tunashred.dto.BannedWordRequest;
 import com.github.tunashred.dto.MessageRequest;
 import com.github.tunashred.dtos.MessageInfo;
 
@@ -31,6 +32,18 @@ public class MessageController {
             }
         });
 
+        app.post("admin-add-banned-word", ctx -> {
+            BannedWordRequest request = getBannedWord(ctx);
+            producerService.addBannedWordToTopic(request.getTopic(), request.getWord());
+            ctx.result("Added banned word: " + request.getWord());
+        });
+
+        app.post("admin-remove-banned-word", ctx -> {
+            BannedWordRequest request = getBannedWord(ctx);
+            producerService.removeBannedWordFromTopic(request.getTopic(), request.getWord());
+            ctx.result("Added banned word: " + request.getWord());
+        });
+
         app.get("/", ctx -> ctx.redirect("swagger-ui.html"));
     }
 
@@ -48,5 +61,19 @@ public class MessageController {
         }
 
         return new MessageRequest(message, Integer.parseInt(dummyParam));
+    }
+
+    private static BannedWordRequest getBannedWord(Context ctx) throws ValidationException {
+        String topic = ctx.queryParam("topic");
+        String word = ctx.queryParam("word");
+
+        if (topic == null || topic.trim().isEmpty()) {
+            throw new ValidationException("Parameter 'topic' is required");
+        }
+
+        if (word == null || word.trim().isEmpty()) {
+            throw new ValidationException("Parameter 'word' is required");
+        }
+        return new BannedWordRequest(topic, word);
     }
 }

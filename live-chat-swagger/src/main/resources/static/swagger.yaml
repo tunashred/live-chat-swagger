@@ -35,3 +35,46 @@ paths:
             text/plain:
               schema:
                 type: string
+
+
+
+  /admin-add-banned-word:
+    post:
+      summary: Add a new banned word to a dedicated topic
+      parameters:
+        - name: topic
+          in: query
+          description: Dedicated topic for banned words
+          required: true
+          schema:
+            type: string
+        - name: word
+          in: query
+          description: Word to add
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Banned word added successfully
+
+  /admin-remove-banned-word:
+    post:
+      summary: Remove a new banned word from a dedicated topic
+      parameters:
+        - name: topic
+          in: query
+          description: Dedicated topic for banned words
+          required: true
+          schema:
+            type: string
+        - name: word
+          in: query
+          description: Word to remove
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Banned word removed successfully
+

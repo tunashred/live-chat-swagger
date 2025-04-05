@@ -18,6 +18,10 @@ public class ClientProducer {
         this.producer = new KafkaProducer<>(KafkaConfig.getProducerProps());
     }
 
+    //
+    // Client API
+    //
+
     public void sendMessage(String message) {
         MessageInfo messageInfo = new MessageInfo(KafkaConfig.groupChat, KafkaConfig.user, message);
         try {
@@ -29,6 +33,23 @@ public class ClientProducer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //
+    // Admin API
+    //
+
+    // TODO: would be nice to add kafka topic name semantic validation
+    public void addBannedWordToTopic(String topic, String word) {
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, word, word);
+        producer.send(record);
+        producer.flush();
+    }
+
+    public void removeBannedWordFromTopic(String topic, String word) {
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, word, null);
+        producer.send(record);
+        producer.flush();
     }
 
     public void close() {

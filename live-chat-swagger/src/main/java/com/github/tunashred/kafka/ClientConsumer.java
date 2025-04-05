@@ -26,6 +26,20 @@ public class ClientConsumer {
         this.consumer.subscribe(Collections.singletonList(KafkaConfig.group_topic));
     }
 
+    private MessageInfo consumeStoredMessage() throws JsonProcessingException {
+        MessageInfo message = MessageInfo.deserialize(records.get(0).value());
+        records.remove(0);
+        return message;
+    }
+
+    public void close() {
+        consumer.close();
+    }
+
+    //
+    // Client API
+    //
+
     public List<String> consumeMessages(Duration timeout) {
         ConsumerRecords<String, String> records = consumer.poll(timeout);
         List<String> messages = new ArrayList<>();
@@ -62,15 +76,5 @@ public class ClientConsumer {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private MessageInfo consumeStoredMessage() throws JsonProcessingException {
-        MessageInfo message = MessageInfo.deserialize(records.get(0).value());
-        records.remove(0);
-        return message;
-    }
-
-    public void close() {
-        consumer.close();
     }
 }
