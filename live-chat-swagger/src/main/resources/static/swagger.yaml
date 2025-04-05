@@ -51,9 +51,9 @@ paths:
         - name: topic
           in: query
           description: Dedicated topic for banned words
-          required: true
           schema:
             type: string
+            default: banned-words
         - name: word
           in: query
           description: Word to add
@@ -73,9 +73,9 @@ paths:
         - name: topic
           in: query
           description: Dedicated topic for banned words
-          required: true
           schema:
             type: string
+            default: banned-words
         - name: word
           in: query
           description: Word to remove
