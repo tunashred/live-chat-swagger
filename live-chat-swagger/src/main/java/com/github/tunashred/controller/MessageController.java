@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 public class MessageController {
     private static final Logger logger = LogManager.getLogger(MessageController.class);
 
+    private static final String SEPARATOR = "#";
+
     private static Map<String, Consumer> consumersMap = new HashMap<>();
     private static Map<String, Producer> producersMap = new HashMap<>();
 
@@ -43,13 +45,13 @@ public class MessageController {
             }
         });
 
-        app.post("admin-add-banned-word", ctx -> {
+        app.post("/admin/ban-word", ctx -> {
 //            BannedWordRequest request = getBannedWord(ctx);
 //            producerService.addBannedWordToTopic(request.getTopic(), request.getWord());
 //            ctx.result("Added banned word: " + request.getWord());
         });
 
-        app.post("admin-remove-banned-word", ctx -> {
+        app.post("/admin/unban-word", ctx -> {
 //            BannedWordRequest request = getBannedWord(ctx);
 //            producerService.removeBannedWordFromTopic(request.getTopic(), request.getWord());
 //            ctx.result("Added banned word: " + request.getWord());
@@ -105,7 +107,7 @@ public class MessageController {
     }
 
     private static List<UserMessage> consumeMessages(String channel, String username) {
-        Consumer consumer = consumersMap.computeIfAbsent(channel + "-" + username, v -> {
+        Consumer consumer = consumersMap.computeIfAbsent(channel + SEPARATOR + username, v -> {
             try {
                 return new Consumer(channel, username);
             } catch (IOException e) {

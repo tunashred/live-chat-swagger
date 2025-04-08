@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 @Getter
 @AllArgsConstructor
-@FieldDefaults(makeFinal = true ,level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class BannedWordRequest {
     String topic;
     String word;

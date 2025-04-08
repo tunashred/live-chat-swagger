@@ -37,7 +37,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        "201":
           description: Message sent successfully
   /client/consume:
     post:
@@ -63,7 +63,7 @@ paths:
 
 
 
-  /admin-add-banned-word:
+  /admin/ban-word:
     post:
       summary: Add a new banned word to a dedicated topic
       tags:
@@ -85,7 +85,7 @@ paths:
         "200":
           description: Banned word added successfully
 
-  /admin-remove-banned-word:
+  /admin/unban-word:
     post:
       summary: Remove a new banned word from a dedicated topic
       tags:
