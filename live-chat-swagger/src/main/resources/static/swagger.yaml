@@ -12,12 +12,24 @@ tags:
   - name: Admin API
     description: Operations related to staff/devs
 paths:
-  /client-produce-message:
+  /client/produce:
     post:
       summary: Produce a client message
       tags:
         - Client API
       parameters:
+        - name: channel
+          in: query
+          description: Channel name
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: query
+          description: Your username
+          required: true
+          schema:
+            type: string
         - name: message
           in: query
           description: Message to send
@@ -27,18 +39,27 @@ paths:
       responses:
         "200":
           description: Message sent successfully
-  /client-consume-message:
-    get:
+  /client/consume:
+    post:
       summary: Consume client message
       tags:
         - Client API
+      parameters:
+        - name: channel
+          in: query
+          description: Channel to consume from
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: query
+          description: Your username
+          required: true
+          schema:
+            type: string
       responses:
         "200":
-          description: Message consumed
-          content:
-            text/plain:
-              schema:
-                type: string
+          description: Messages consumed successfully
 
 
 

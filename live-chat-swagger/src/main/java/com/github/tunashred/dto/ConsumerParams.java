@@ -2,13 +2,13 @@ package com.github.tunashred.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-@Getter
+@Data
 @AllArgsConstructor
-@FieldDefaults(makeFinal = true ,level = AccessLevel.PRIVATE)
-public class BannedWordRequest {
-    String topic;
-    String word;
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ConsumerParams {
+    String channel;
+    String username;
 }
