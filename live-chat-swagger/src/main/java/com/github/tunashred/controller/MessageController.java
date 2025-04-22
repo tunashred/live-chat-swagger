@@ -39,7 +39,7 @@ public class MessageController {
             ConsumerParams params = getConsumerParams(ctx);
             List<UserMessage> messages = consumeMessages(params.getChannel(), params.getUsername());
             if (messages.isEmpty()) {
-                ctx.result("[WARNING] No records to fetch");
+                ctx.result(" ");
             } else {
                 ctx.result(messages.stream().map(Object::toString).collect(Collectors.joining("\n")));
             }
