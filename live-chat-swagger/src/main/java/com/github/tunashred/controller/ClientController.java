@@ -2,8 +2,8 @@ package com.github.tunashred.controller;
 
 import com.github.tunashred.clients.Consumer;
 import com.github.tunashred.clients.Producer;
-import com.github.tunashred.dto.ConsumerParams;
-import com.github.tunashred.dto.ProducerParams;
+import com.github.tunashred.dto.client.ConsumerParams;
+import com.github.tunashred.dto.client.ProducerParams;
 import com.github.tunashred.dtos.UserMessage;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Log4j2
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MessageController {
+public class ClientController {
     static String SEPARATOR = "#";
 
     static Map<String, Consumer> consumersMap = new HashMap<>();
@@ -42,8 +42,6 @@ public class MessageController {
                 ctx.result(messages.stream().map(Object::toString).collect(Collectors.joining("\n")));
             }
         });
-
-        app.get("/", ctx -> ctx.redirect("swagger-ui.html"));
     }
 
     private static ProducerParams getProducerParams(Context ctx) throws ValidationException {

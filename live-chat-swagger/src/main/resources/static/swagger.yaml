@@ -9,8 +9,8 @@ servers:
 tags:
   - name: Client API
     description: Operations related to clients
-  - name: Admin API
-    description: Operations related to staff/devs
+  - name: Manager API
+    description: Operations related to tenant manager
 paths:
   /client/produce:
     post:
@@ -61,49 +61,158 @@ paths:
         "200":
           description: Messages consumed successfully
 
-
-
-  /admin/ban-word:
-    post:
-      summary: Add a new banned word to a dedicated topic
+  /manager/list-packs:
+    get:
+      summary: Add a new banned word to a certain pack
       tags:
-        - Admin API
+        - Manager API
+      responses:
+        "200":
+          description: Packs fetched successfully
+
+  /manager/create-pack:
+    post:
+      summary: Create a new pack by uploading a file
+      tags:
+        - Manager API
       parameters:
-        - name: topic
+        - name: file
           in: query
-          description: Dedicated topic for banned words
+          required: true
+          description: The path to file to upload
           schema:
             type: string
-            default: banned-words
-        - name: word
+            format: binary
+        - name: pack
           in: query
-          description: Word to add
           required: true
+          description: Name of new pack
           schema:
             type: string
       responses:
         "200":
-          description: Banned word added successfully
+          description: Pack created successfully
+        "400":
+          description: Failed to create pack
 
-  /admin/unban-word:
+  /manager/add-word:
     post:
-      summary: Remove a new banned word from a dedicated topic
+      summary: Add a new word to a certain pack
       tags:
-        - Admin API
+        - Manager API
       parameters:
-        - name: topic
+        - name: pack
           in: query
-          description: Dedicated topic for banned words
+          required: true
+          description: Pack name
           schema:
             type: string
-            default: banned-words
         - name: word
           in: query
-          description: Word to remove
           required: true
+          description: New word
           schema:
             type: string
       responses:
         "200":
-          description: Banned word removed successfully
+          description: Word added
+        "400":
+          description: Failed to add word
 
+  /manager/add-words:
+    post:
+      summary: Add words from a file to a certain pack
+      tags:
+        - Manager API
+      parameters:
+        - name: file
+          in: query
+          required: true
+          description: File
+          schema:
+            type: string
+        - name: pack
+          in: query
+          required: true
+          description: Pack name
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Words added
+        "400":
+          description: Failed to add words
+
+  /manager/delete-word:
+    post:
+      summary: Remove a word from a certain pack
+      tags:
+        - Manager API
+      parameters:
+        - name: pack
+          in: query
+          required: true
+          description: Pack name
+          schema:
+            type: string
+        - name: word
+          in: query
+          required: true
+          description: Remove word
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Word removed
+        "400":
+          description: Failed to remove word
+
+  /manager/delete-pack:
+    post:
+      summary: Delete pack
+      tags:
+        - Manager API
+      parameters:
+        - name: pack
+          in: query
+          required: true
+          description: Pack name
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Pack deleted
+        "400":
+          description: Failed to delete pack
+
+  /manager/search-word:
+    get:
+      summary: Search a word through all the available packs
+      tags:
+        - Manager API
+      parameters:
+        - name: word
+          in: query
+          required: true
+          description: Word to search
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Packs interrogated
+
+  /manager/get-pack:
+    get:
+      summary: Get a list of a pack's contents
+      tags:
+        - Manager API
+      parameters:
+        - name: Pack
+          in: query
+          required: true
+          description: Pack name
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Pack contents fetched

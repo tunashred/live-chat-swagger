@@ -1,5 +1,4 @@
-package com.github.tunashred.dto;
-
+package com.github.tunashred.dto.manager;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,8 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProducerParams {
-    String channel;
-    String username;
-    String message;
+public class DoubleStringParams {
+    String stringFirst;
+    String stringSecond;
 }

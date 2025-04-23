@@ -1,4 +1,4 @@
-package com.github.tunashred.dto;
+package com.github.tunashred.dto.client;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

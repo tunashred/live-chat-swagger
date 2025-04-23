@@ -98,7 +98,7 @@ Configuration:
         level: "info"
 
       - name: org.apache.kafka
-        level: "warn"
+        level: "info"
 
       - name: io.javalin
         level: "info"

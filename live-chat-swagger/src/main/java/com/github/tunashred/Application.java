@@ -1,7 +1,8 @@
 package com.github.tunashred;
 
 import com.github.tunashred.config.JavalinConfig;
-import com.github.tunashred.controller.MessageController;
+import com.github.tunashred.controller.ClientController;
+import com.github.tunashred.controller.ManagerController;
 import io.javalin.Javalin;
 import lombok.extern.log4j.Log4j2;
 
@@ -11,9 +12,14 @@ public class Application {
         log.info("Starting Swagger server");
         Javalin app = JavalinConfig.configureServer();
 
-        MessageController.registerRoutes(app);
+        ClientController.registerRoutes(app);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(MessageController::close));
+        ManagerController.registerRoutes(app);
+
+        app.get("/", ctx -> ctx.redirect("swagger-ui.html"));
+
+        Runtime.getRuntime().addShutdownHook(new Thread(ClientController::close));
+        Runtime.getRuntime().addShutdownHook(new Thread(ManagerController::close));
 
         app.start(7000);
     }

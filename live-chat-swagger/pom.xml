@@ -23,6 +23,7 @@
 
         <com.github.tunashred.dtos.version>2.0-SNAPSHOT</com.github.tunashred.dtos.version>
         <com.github.tunashred.client.version>1.0-SNAPSHOT</com.github.tunashred.client.version>
+        <com.github.tunashred.manager.version>1.0-SNAPSHOT</com.github.tunashred.manager.version>
         <kafka.version>3.7.1</kafka.version>
         <javalin.version>6.4.0</javalin.version>
         <swagger.version>2.2.28</swagger.version>
@@ -42,6 +43,12 @@
             <groupId>com.github.tunashred</groupId>
             <artifactId>live-chat-client</artifactId>
             <version>${com.github.tunashred.client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tunashred</groupId>
+            <artifactId>live-chat-manager</artifactId>
+            <version>${com.github.tunashred.manager.version}</version>
         </dependency>
 
         <dependency>
