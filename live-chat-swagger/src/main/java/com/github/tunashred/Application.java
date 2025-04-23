@@ -2,15 +2,13 @@ package com.github.tunashred;
 
 import com.github.tunashred.config.JavalinConfig;
 import com.github.tunashred.controller.MessageController;
-
 import io.javalin.Javalin;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class Application {
-    private static final Logger logger = LogManager.getLogger(Application.class);
-
     public static void main(String[] args) {
+        log.info("Starting Swagger server");
         Javalin app = JavalinConfig.configureServer();
 
         MessageController.registerRoutes(app);

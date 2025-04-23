@@ -2,14 +2,14 @@ package com.github.tunashred.controller;
 
 import com.github.tunashred.clients.Consumer;
 import com.github.tunashred.clients.Producer;
-import com.github.tunashred.dto.BannedWordRequest;
 import com.github.tunashred.dto.ConsumerParams;
 import com.github.tunashred.dto.ProducerParams;
 import com.github.tunashred.dtos.UserMessage;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 
 import javax.xml.bind.ValidationException;
 import java.io.IOException;
@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Log4j2
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MessageController {
-    private static final Logger logger = LogManager.getLogger(MessageController.class);
+    static String SEPARATOR = "#";
 
-    private static final String SEPARATOR = "#";
-
-    private static Map<String, Consumer> consumersMap = new HashMap<>();
-    private static Map<String, Producer> producersMap = new HashMap<>();
+    static Map<String, Consumer> consumersMap = new HashMap<>();
+    static Map<String, Producer> producersMap = new HashMap<>();
 
 //    private static Producer adminProducer = new Producer();
 
@@ -45,35 +45,27 @@ public class MessageController {
             }
         });
 
-        app.post("/admin/ban-word", ctx -> {
-//            BannedWordRequest request = getBannedWord(ctx);
-//            producerService.addBannedWordToTopic(request.getTopic(), request.getWord());
-//            ctx.result("Added banned word: " + request.getWord());
-        });
-
-        app.post("/admin/unban-word", ctx -> {
-//            BannedWordRequest request = getBannedWord(ctx);
-//            producerService.removeBannedWordFromTopic(request.getTopic(), request.getWord());
-//            ctx.result("Added banned word: " + request.getWord());
-        });
-
         app.get("/", ctx -> ctx.redirect("swagger-ui.html"));
     }
 
     private static ProducerParams getProducerParams(Context ctx) throws ValidationException {
+        log.trace("Querying for producer params");
         String channel = ctx.queryParam("channel");
         String username = ctx.queryParam("username");
         String message = ctx.queryParam("message");
 
         if (channel == null || channel.trim().isEmpty()) {
+            log.error("Field 'channel' is empty");
             throw new ValidationException("Parameter 'channel' is required");
         }
 
         if (username == null || username.trim().isEmpty()) {
+            log.error("Field 'username' is empty");
             throw new ValidationException("Parameter 'username' is required");
         }
 
         if (message == null || message.trim().isEmpty()) {
+            log.error("Field 'message' is empty");
             throw new ValidationException("Parameter 'message' is required");
         }
 
@@ -82,24 +74,30 @@ public class MessageController {
 
     private static void sendMessage(String channel, String username, String message) {
         Producer producer = producersMap.computeIfAbsent(channel, v -> {
+            log.info("Sending message '" + message + "' to channel '" + channel + "' from user '" + username + "'");
             try {
                 return new Producer();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                log.error("Unable to create new producer");
+                return null;
             }
         });
+        assert producer != null; // TODO: revise this
         producer.sendMessage(channel, username, message);
     }
 
     private static ConsumerParams getConsumerParams(Context ctx) throws ValidationException {
+        log.trace("Querying for consumer params");
         String channel = ctx.queryParam("channel");
         String username = ctx.queryParam("username");
 
         if (channel == null || channel.trim().isEmpty()) {
+            log.error("Field 'channel' is empty");
             throw new ValidationException("Parameter 'channel' is required");
         }
 
         if (username == null || username.trim().isEmpty()) {
+            log.error("Field 'username' is empty");
             throw new ValidationException("Parameter 'username' is required");
         }
 
@@ -108,38 +106,15 @@ public class MessageController {
 
     private static List<UserMessage> consumeMessages(String channel, String username) {
         Consumer consumer = consumersMap.computeIfAbsent(channel + SEPARATOR + username, v -> {
+            log.info("User '" + username + "' consuming messages from channel '" + channel + "'");
             try {
                 return new Consumer(channel, username);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                log.error("Unable to create consumer for new user '" + username + "' at channel '" + channel + "'");
+                return null;
             }
         });
+        assert consumer != null; // TODO: revise this
         return consumer.consume();
     }
-
-    private static BannedWordRequest getBannedWord(Context ctx) throws ValidationException {
-        String topic = ctx.queryParam("topic");
-        String word = ctx.queryParam("word");
-
-        if (topic == null || topic.trim().isEmpty()) {
-            throw new ValidationException("Parameter 'topic' is required");
-        }
-
-        if (word == null || word.trim().isEmpty()) {
-            throw new ValidationException("Parameter 'word' is required");
-        }
-        return new BannedWordRequest(topic, word);
-    }
-
-//    private static void addBannedWordToTopic(String topic, String word) {
-//        ProducerRecord<String, String> record = new ProducerRecord<>(topic, word, word);
-//        adminProducer.send(record);
-//        adminProducer.flush();
-//    }
-//
-//    private static void removeBannedWordFromTopic(String topic, String word) {
-//        ProducerRecord<String, String> record = new ProducerRecord<>(topic, word, null);
-//        adminProducer.send(record);
-//        adminProducer.flush();
-//    }
 }
