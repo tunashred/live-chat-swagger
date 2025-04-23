@@ -26,8 +26,6 @@ public class MessageController {
     static Map<String, Consumer> consumersMap = new HashMap<>();
     static Map<String, Producer> producersMap = new HashMap<>();
 
-//    private static Producer adminProducer = new Producer();
-
     public static void registerRoutes(Javalin app) {
         app.post("/client/produce", ctx -> {
             ProducerParams message = getProducerParams(ctx);
@@ -116,5 +114,24 @@ public class MessageController {
         });
         assert consumer != null; // TODO: revise this
         return consumer.consume();
+    }
+
+    public static void close() {
+        closeConsumers();
+        closeProducers();
+    }
+
+    private static void closeConsumers() {
+        for (Map.Entry<String, Consumer> entry : consumersMap.entrySet()) {
+            log.trace("Closing consumer '" + entry.getKey() + "'");
+            entry.getValue().close();
+        }
+    }
+
+    private static void closeProducers() {
+        for (Map.Entry<String, Producer> entry : producersMap.entrySet()) {
+            log.trace("Closing producer '" + entry.getKey() + "'");
+            entry.getValue().close();
+        }
     }
 }

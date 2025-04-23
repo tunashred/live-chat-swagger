@@ -13,6 +13,8 @@ public class Application {
 
         MessageController.registerRoutes(app);
 
+        Runtime.getRuntime().addShutdownHook(new Thread(MessageController::close));
+
         app.start(7000);
     }
 }
