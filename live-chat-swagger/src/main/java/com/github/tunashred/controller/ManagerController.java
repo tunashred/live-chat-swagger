@@ -1,7 +1,7 @@
 package com.github.tunashred.controller;
 
-import com.github.tunashred.dto.manager.DoubleStringParams;
 import com.github.tunashred.dto.manager.FileTopicParams;
+import com.github.tunashred.dto.manager.TopicWordParams;
 import com.github.tunashred.manager.Manager;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -12,68 +12,80 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.xml.bind.ValidationException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @Log4j2
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ManagerController {
-    static Manager manager;
-
-    static {
-        try {
-            manager = new Manager();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    static Manager manager = new Manager();
 
     public static void registerRoutes(Javalin app) {
         app.get("/manager/list-packs", ctx -> {
-            ctx.result(String.join("\n", Manager.listPacks()));
+            List<String> packs = Manager.listPacks();
+            if (packs.isEmpty()) {
+                ctx.status(204).result("No packs available");
+            } else {
+                ctx.status(200).result(String.join("\n", packs));
+            }
+        });
+
+        app.get("/manager/search-word", ctx -> {
+            String param = getStringParam(ctx);
+            List<String> matches = Manager.searchWord(param);
+            if (matches.isEmpty()) {
+                ctx.status(204).result("No packs contain the searched word or expression");
+            } else {
+                ctx.status(200).result(String.join("\n", matches));
+            }
+        });
+
+        app.get("/manager/get-pack", ctx -> {
+            String param = getStringParam(ctx);
+            List<String> contents = Manager.getPack(param);
+            if (contents.isEmpty()) {
+                ctx.status(204).result("The pack does not exist or it is empty");
+            } else {
+                ctx.status(200).result(String.join("\n", contents));
+            }
         });
 
         app.post("/manager/create-pack", ctx -> {
             FileTopicParams params = getFileTopicParams(ctx);
-            Boolean success = Manager.createPackFromFile(params.getFilePath(), params.getTopic());
+            boolean success = Manager.createPackFromFile(params.getInputStream(), params.getTopic());
             if (success) {
-                ctx.status(200).result("Pack created successfully.");
+                ctx.status(201).result("Pack created successfully");
             } else {
-                ctx.status(400).result("Failed to create pack.");
+                ctx.status(400).result("Failed to create pack");
             }
         });
 
         app.post("/manager/add-word", ctx -> {
-            DoubleStringParams params = getDoubleStringParams(ctx);
-            System.out.println(params.getStringFirst());
-            System.out.println(params.getStringSecond());
-            Boolean success = Manager.addWord(params.getStringFirst(), params.getStringSecond());
+            TopicWordParams params = getTopicWordParams(ctx);
+            boolean success = Manager.addWord(params.getStringFirst(), params.getStringSecond());
             if (success) {
-                ctx.status(200).result("Word added successfully.");
+                ctx.status(200).result("Word added successfully");
             } else {
-                ctx.status(400).result("Failed add word.");
+                ctx.status(400).result("Failed add word");
             }
         });
 
         app.post("/manager/add-words", ctx -> {
             FileTopicParams params = getFileTopicParams(ctx);
-            Boolean success = Manager.addWords(params.getFilePath(), params.getTopic());
+            boolean success = Manager.addWords(params.getInputStream(), params.getTopic());
             if (success) {
-                ctx.status(200).result("Words added successfully.");
+                ctx.status(200).result("Words added successfully");
             } else {
-                ctx.status(400).result("Failed add words.");
+                ctx.status(400).result("Failed add words");
             }
         });
 
         app.post("/manager/delete-word", ctx -> {
-            DoubleStringParams params = getDoubleStringParams(ctx);
-            Boolean success = Manager.deleteWord(params.getStringFirst(), params.getStringSecond());
+            TopicWordParams params = getTopicWordParams(ctx);
+            boolean success = Manager.deleteWord(params.getStringFirst(), params.getStringSecond());
             if (success) {
-                ctx.status(200).result("Word removed successfully.");
+                ctx.status(200).result("Word removed successfully");
             } else {
-                ctx.status(400).result("Failed remove word.");
+                ctx.status(400).result("Failed remove word");
             }
         });
 
@@ -81,20 +93,10 @@ public class ManagerController {
             String param = getStringParam(ctx);
             Boolean success = Manager.deletePack(param);
             if (success) {
-                ctx.status(200).result("Words added successfully.");
+                ctx.status(200).result("Pack deleted successfully");
             } else {
-                ctx.status(400).result("Failed add words.");
+                ctx.status(400).result("Failed to delete pack");
             }
-        });
-
-        app.get("/manager/search-word", ctx -> {
-            String param = getStringParam(ctx);
-            ctx.result(String.join("\n", Manager.searchWord(param)));
-        });
-
-        app.get("/manager/get-pack", ctx -> {
-            String param = getStringParam(ctx);
-            ctx.result(String.join("\n", Manager.getPack(param)));
         });
     }
 
@@ -104,9 +106,6 @@ public class ManagerController {
         String topic = ctx.queryParam("topic");
 
         if (file != null) {
-            Path target = Paths.get("uploads", file.filename());
-            Files.createDirectories(target.getParent());
-            Files.copy(file.content(), target, StandardCopyOption.REPLACE_EXISTING);
             log.trace("File uploaded");
         } else {
             throw new ValidationException("Parameter 'file' is required");
@@ -116,10 +115,11 @@ public class ManagerController {
             log.error("Field 'topic' is empty");
             throw new ValidationException("Parameter 'topic' is required");
         }
-        return new FileTopicParams(file.filename(), topic);
+        log.trace("'FileTopicParams' validated");
+        return new FileTopicParams(file.content(), topic);
     }
 
-    private static DoubleStringParams getDoubleStringParams(Context ctx) throws ValidationException {
+    private static TopicWordParams getTopicWordParams(Context ctx) throws ValidationException {
         log.trace("Querying for string param");
         String pack = ctx.queryParam("pack");
         String word = ctx.queryParam("word");
@@ -136,7 +136,7 @@ public class ManagerController {
             log.error("Field 'word' is empty");
             throw new ValidationException("Parameter 'word' is required");
         }
-        return new DoubleStringParams(pack, word);
+        return new TopicWordParams(pack, word);
     }
 
     private static String getStringParam(Context ctx) throws ValidationException {

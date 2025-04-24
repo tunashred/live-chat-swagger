@@ -69,28 +69,69 @@ paths:
       responses:
         "200":
           description: Packs fetched successfully
+        "204":
+          description: No packs available
+
+  /manager/search-word:
+    get:
+      summary: Search a word through all the available packs
+      tags:
+        - Manager API
+      parameters:
+        - name: text
+          in: query
+          required: true
+          description: Word to search
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Packs interrogated and retrieved matches
+        "204":
+          description: Packs interrogated and no matches were found
+
+  /manager/get-pack:
+    get:
+      summary: Get a list of a pack's contents
+      tags:
+        - Manager API
+      parameters:
+        - name: text
+          in: query
+          required: true
+          description: Pack name
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Pack contents fetched
+        "204":
+          description: The pack does not exist or it is empty
 
   /manager/create-pack:
     post:
       summary: Create a new pack by uploading a file
       tags:
         - Manager API
-      parameters:
-        - name: file
-          in: query
+      requestBody:
           required: true
-          description: The path to file to upload
-          schema:
-            type: string
-            format: binary
-        - name: pack
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  file:
+                    type: string
+                    format: binary
+      parameters:
+        - name: topic
           in: query
           required: true
           description: Name of new pack
           schema:
             type: string
       responses:
-        "200":
+        "201":
           description: Pack created successfully
         "400":
           description: Failed to create pack
@@ -124,14 +165,18 @@ paths:
       summary: Add words from a file to a certain pack
       tags:
         - Manager API
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
       parameters:
-        - name: file
-          in: query
-          required: true
-          description: File
-          schema:
-            type: string
-        - name: pack
+        - name: topic
           in: query
           required: true
           description: Pack name
@@ -173,7 +218,7 @@ paths:
       tags:
         - Manager API
       parameters:
-        - name: pack
+        - name: text
           in: query
           required: true
           description: Pack name
@@ -184,35 +229,3 @@ paths:
           description: Pack deleted
         "400":
           description: Failed to delete pack
-
-  /manager/search-word:
-    get:
-      summary: Search a word through all the available packs
-      tags:
-        - Manager API
-      parameters:
-        - name: word
-          in: query
-          required: true
-          description: Word to search
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Packs interrogated
-
-  /manager/get-pack:
-    get:
-      summary: Get a list of a pack's contents
-      tags:
-        - Manager API
-      parameters:
-        - name: Pack
-          in: query
-          required: true
-          description: Pack name
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Pack contents fetched

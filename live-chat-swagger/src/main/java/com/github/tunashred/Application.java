@@ -22,5 +22,6 @@ public class Application {
         Runtime.getRuntime().addShutdownHook(new Thread(ManagerController::close));
 
         app.start(7000);
+        log.info("Swagger application started");
     }
 }
