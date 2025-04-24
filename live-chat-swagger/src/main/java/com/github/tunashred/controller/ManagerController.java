@@ -3,6 +3,7 @@ package com.github.tunashred.controller;
 import com.github.tunashred.dto.manager.FileTopicParams;
 import com.github.tunashred.dto.manager.TopicWordParams;
 import com.github.tunashred.manager.Manager;
+import com.github.tunashred.streamer.Streamer;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
@@ -17,9 +18,16 @@ import java.util.List;
 @Log4j2
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ManagerController {
-    static Manager manager = new Manager();
+    static Manager manager;
+    static String PREFERENCES_TOPIC = "streamer-preferences";
+    static String STREAMER_PRODUCER_PROPERTIES = "src/main/resources/streamer/producer.properties";
+    static String STREAMER_STREAMS_PROPERTIES = "src/main/resources/streamer/streams.properties";
 
     public static void registerRoutes(Javalin app) {
+        Streamer streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_PRODUCER_PROPERTIES, STREAMER_STREAMS_PROPERTIES);
+        manager = new Manager(streamer);
+        streamer.start();
+
         app.get("/manager/list-packs", ctx -> {
             List<String> packs = Manager.listPacks();
             if (packs.isEmpty()) {

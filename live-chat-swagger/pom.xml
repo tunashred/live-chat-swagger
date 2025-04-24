@@ -21,9 +21,10 @@
         <project.resources.sourceEncoding>${project.encoding}</project.resources.sourceEncoding>
         <archetype.encoding>${project.encoding}</archetype.encoding>
 
-        <com.github.tunashred.dtos.version>2.0-SNAPSHOT</com.github.tunashred.dtos.version>
-        <com.github.tunashred.client.version>1.0-SNAPSHOT</com.github.tunashred.client.version>
         <com.github.tunashred.manager.version>1.0-SNAPSHOT</com.github.tunashred.manager.version>
+        <com.github.tunashred.streamer.version>1.0-SNAPSHOT</com.github.tunashred.streamer.version>
+        <com.github.tunashred.client.version>1.0-SNAPSHOT</com.github.tunashred.client.version>
+        <com.github.tunashred.dtos.version>2.0-SNAPSHOT</com.github.tunashred.dtos.version>
         <kafka.version>3.7.1</kafka.version>
         <javalin.version>6.4.0</javalin.version>
         <swagger.version>2.2.28</swagger.version>
@@ -35,8 +36,14 @@
     <dependencies>
         <dependency>
             <groupId>com.github.tunashred</groupId>
-            <artifactId>live-chat-dtos</artifactId>
-            <version>${com.github.tunashred.dtos.version}</version>
+            <artifactId>live-chat-manager</artifactId>
+            <version>${com.github.tunashred.manager.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tunashred</groupId>
+            <artifactId>live-chat-streamer</artifactId>
+            <version>${com.github.tunashred.streamer.version}</version>
         </dependency>
 
         <dependency>
@@ -47,8 +54,8 @@
 
         <dependency>
             <groupId>com.github.tunashred</groupId>
-            <artifactId>live-chat-manager</artifactId>
-            <version>${com.github.tunashred.manager.version}</version>
+            <artifactId>live-chat-dtos</artifactId>
+            <version>${com.github.tunashred.dtos.version}</version>
         </dependency>
 
         <dependency>
