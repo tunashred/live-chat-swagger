@@ -1,23 +1,17 @@
 package com.github.tunashred.controller;
 
-import com.github.tunashred.dto.client.ConsumerParams;
-import com.github.tunashred.dto.client.ProducerParams;
-import com.github.tunashred.dto.manager.TopicWordParams;
 import com.github.tunashred.dto.streamer.StreamerPackParams;
-import com.github.tunashred.dtos.UserMessage;
 import com.github.tunashred.streamer.Streamer;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import lombok.extern.log4j.Log4j2;
 
 import javax.xml.bind.ValidationException;
+import java.util.List;
+import java.util.Properties;
 
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
-
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class StreamerController {
@@ -33,7 +27,9 @@ public class StreamerController {
 
         Properties consumerProps = new Properties();
         consumerProps.put(GROUP_ID_CONFIG, "swagger-streamer-consumer-controller");
-        streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_CONSUMER_PROPERTIES, STREAMER_PRODUCER_PROPERTIES, STREAMER_STREAMS_PROPERTIES, consumerProps, streamsProps);
+        streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_CONSUMER_PROPERTIES, STREAMER_PRODUCER_PROPERTIES,
+                STREAMER_STREAMS_PROPERTIES, consumerProps, streamsProps);
+
         streamer.start();
 
         app.get("/streamer/list-packs", ctx -> {
@@ -49,7 +45,7 @@ public class StreamerController {
             StreamerPackParams params = getStreamerPackParams(ctx);
             boolean success = Streamer.addPreference(params.getStreamer(), params.getPack());
             if (success) {
-                ctx.status(200).result("Pack added succesfully");
+                ctx.status(201).result("Pack added succesfully");
             } else {
                 ctx.status(400).result("Failed to add pack");
             }

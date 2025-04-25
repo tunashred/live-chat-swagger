@@ -34,7 +34,9 @@ public class ManagerController {
 
         Properties consumerProps = new Properties();
         consumerProps.put(GROUP_ID_CONFIG, "swagger-manager-controller-streamer-consumer");
-        Streamer streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_CONSUMER_PROPERTIES, STREAMER_PRODUCER_PROPERTIES, STREAMER_STREAMS_PROPERTIES, consumerProps, streamsProps);
+        Streamer streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_CONSUMER_PROPERTIES, STREAMER_PRODUCER_PROPERTIES,
+                STREAMER_STREAMS_PROPERTIES, consumerProps, streamsProps);
+
         manager = new Manager(streamer);
         streamer.start();
 
@@ -81,7 +83,7 @@ public class ManagerController {
             TopicWordParams params = getTopicWordParams(ctx);
             boolean success = Manager.addWord(params.getStringFirst(), params.getStringSecond());
             if (success) {
-                ctx.status(200).result("Word added successfully");
+                ctx.status(201).result("Word added successfully");
             } else {
                 ctx.status(400).result("Failed add word");
             }
@@ -91,7 +93,7 @@ public class ManagerController {
             FileTopicParams params = getFileTopicParams(ctx);
             boolean success = Manager.addWords(params.getInputStream(), params.getTopic());
             if (success) {
-                ctx.status(200).result("Words added successfully");
+                ctx.status(201).result("Words added successfully");
             } else {
                 ctx.status(400).result("Failed add words");
             }

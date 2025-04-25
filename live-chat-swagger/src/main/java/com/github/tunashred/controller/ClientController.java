@@ -30,16 +30,16 @@ public class ClientController {
         app.post("/client/produce", ctx -> {
             ProducerParams message = getProducerParams(ctx);
             sendMessage(message.getChannel(), message.getUsername(), message.getMessage());
-            ctx.result("Produced: " + message);
+            ctx.status(201).result("Produced: " + message);
         });
 
         app.post("/client/consume", ctx -> {
             ConsumerParams params = getConsumerParams(ctx);
             List<UserMessage> messages = consumeMessages(params.getChannel(), params.getUsername());
             if (messages.isEmpty()) {
-                ctx.result(" ");
+                ctx.status(204).result(" ");
             } else {
-                ctx.result(messages.stream().map(Object::toString).collect(Collectors.joining("\n")));
+                ctx.status(200).result(messages.stream().map(Object::toString).collect(Collectors.joining("\n")));
             }
         });
     }

@@ -62,6 +62,8 @@ paths:
       responses:
         "200":
           description: Messages consumed successfully
+        "204":
+          description: No new messages available
 
 
   /streamer/list-packs:
@@ -94,14 +96,14 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        "201":
           description: Pack added successfully
         "400":
           description: Failed to add pack
 
   /streamer/remove-pack:
     post:
-      summary: Consume client message
+      summary: Remove a pack from streamer preferences
       tags:
         - Streamer API
       parameters:
@@ -217,7 +219,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        "201":
           description: Word added
         "400":
           description: Failed to add word
@@ -245,7 +247,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        "201":
           description: Words added
         "400":
           description: Failed to add words
