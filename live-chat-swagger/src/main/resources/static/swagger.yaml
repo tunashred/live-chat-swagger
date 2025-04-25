@@ -9,6 +9,8 @@ servers:
 tags:
   - name: Client API
     description: Operations related to clients
+  - name: Streamer API
+    description: Operations related to streamers
   - name: Manager API
     description: Operations related to tenant manager
 paths:
@@ -60,6 +62,66 @@ paths:
       responses:
         "200":
           description: Messages consumed successfully
+
+
+  /streamer/list-packs:
+    get:
+      summary: Show available packs
+      tags:
+        - Streamer API
+      responses:
+        "200":
+          description: Packs fetched successfully
+        "204":
+          description: No packs available
+
+  /streamer/add-pack:
+    post:
+      summary: Add pack to streamer preferences
+      tags:
+        - Streamer API
+      parameters:
+        - name: streamer
+          in: query
+          description: Target streamer
+          required: true
+          schema:
+            type: string
+        - name: pack
+          in: query
+          description: Pack to add
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Pack added successfully
+        "400":
+          description: Failed to add pack
+
+  /streamer/remove-pack:
+    post:
+      summary: Consume client message
+      tags:
+        - Streamer API
+      parameters:
+        - name: streamer
+          in: query
+          description: Target streamer
+          required: true
+          schema:
+            type: string
+        - name: pack
+          in: query
+          description: Pack to remove
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Pack removed successfully
+        "400":
+          description: Failed to remove pack
 
   /manager/list-packs:
     get:

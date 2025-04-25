@@ -14,17 +14,27 @@ import lombok.extern.log4j.Log4j2;
 import javax.xml.bind.ValidationException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
+
+import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
 @Log4j2
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ManagerController {
     static Manager manager;
     static String PREFERENCES_TOPIC = "streamer-preferences";
+    static String STREAMER_CONSUMER_PROPERTIES = "src/main/resources/streamer/consumer.properties";
     static String STREAMER_PRODUCER_PROPERTIES = "src/main/resources/streamer/producer.properties";
     static String STREAMER_STREAMS_PROPERTIES = "src/main/resources/streamer/streams.properties";
 
     public static void registerRoutes(Javalin app) {
-        Streamer streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_PRODUCER_PROPERTIES, STREAMER_STREAMS_PROPERTIES);
+        Properties streamsProps = new Properties();
+        streamsProps.put(APPLICATION_ID_CONFIG, "swagger-manager-controller-streamer-streams");
+
+        Properties consumerProps = new Properties();
+        consumerProps.put(GROUP_ID_CONFIG, "swagger-manager-controller-streamer-consumer");
+        Streamer streamer = new Streamer(PREFERENCES_TOPIC, STREAMER_CONSUMER_PROPERTIES, STREAMER_PRODUCER_PROPERTIES, STREAMER_STREAMS_PROPERTIES, consumerProps, streamsProps);
         manager = new Manager(streamer);
         streamer.start();
 
@@ -99,7 +109,7 @@ public class ManagerController {
 
         app.post("/manager/delete-pack", ctx -> {
             String param = getStringParam(ctx);
-            Boolean success = Manager.deletePack(param);
+            boolean success = Manager.deletePack(param);
             if (success) {
                 ctx.status(200).result("Pack deleted successfully");
             } else {
