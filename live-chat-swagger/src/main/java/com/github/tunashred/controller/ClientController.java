@@ -12,10 +12,13 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 
 import javax.xml.bind.ValidationException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -72,13 +75,23 @@ public class ClientController {
         Producer producer = producersMap.computeIfAbsent(channel, v -> {
             log.info("Sending message '" + message + "' to channel '" + channel + "' from user '" + username + "'");
             try {
-                return new Producer();
+                Properties producerProps = new Properties();
+                try (InputStream inputStream = new FileInputStream("src/main/resources/client/producer.properties")) {
+                    producerProps.load(inputStream);
+                } catch (IOException e) {
+                    throw new IOException(e);
+                }
+
+                return new Producer(producerProps);
             } catch (IOException e) {
                 log.error("Unable to create new producer");
                 return null;
             }
         });
-        assert producer != null; // TODO: revise this
+        if (producer == null) {
+            log.error("Producer is null");
+            return;
+        }
         producer.sendMessage(channel, username, message);
     }
 
@@ -104,13 +117,22 @@ public class ClientController {
         Consumer consumer = consumersMap.computeIfAbsent(channel + SEPARATOR + username, v -> {
             log.info("User '" + username + "' consuming messages from channel '" + channel + "'");
             try {
-                return new Consumer(channel, username);
+                Properties consumerProps = new Properties();
+                try (InputStream inputStream = new FileInputStream("src/main/resources/client/consumer.properties")) {
+                    consumerProps.load(inputStream);
+                } catch (IOException e) {
+                    throw new IOException(e);
+                }
+                return new Consumer(channel, username, consumerProps);
             } catch (IOException e) {
                 log.error("Unable to create consumer for new user '" + username + "' at channel '" + channel + "'");
                 return null;
             }
         });
-        assert consumer != null; // TODO: revise this
+        if (consumer == null) {
+            log.error("Consumer is null");
+            return List.of();
+        }
         return consumer.consume();
     }
 
