@@ -12,7 +12,7 @@ tags:
   - name: Streamer API
     description: Operations related to streamers
   - name: Manager API
-    description: Operations related to tenant manager
+    description: Operations related to manager
 paths:
   /client/produce:
     post:
